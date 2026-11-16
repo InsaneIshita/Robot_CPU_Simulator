@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot CPU Simulator - Interactive COA Architecture & Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation / Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-box">
+                    <svg class="logo-icon" viewBox="0 0 100 100" width="34" height="34">
+                        <defs>
+                            <linearGradient id="headerRoboGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8"/>
+                                <stop offset="100%" stop-color="#0284c7"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="50" y1="20" x2="50" y2="8" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                        <circle cx="50" cy="8" r="6" fill="#38bdf8"/>
+                        <rect x="18" y="30" width="6" height="14" rx="3" fill="#0284c7"/>
+                        <rect x="76" y="30" width="6" height="14" rx="3" fill="#0284c7"/>
+                        <rect x="22" y="18" width="56" height="46" rx="13" fill="#08152e" stroke="#38bdf8" stroke-width="3.5"/>
+                        <rect x="28" y="24" width="44" height="34" rx="8" fill="#030a17"/>
+                        <rect x="34" y="32" width="10" height="13" rx="3.5" fill="#38bdf8"/>
+                        <rect x="56" y="32" width="10" height="13" rx="3.5" fill="#38bdf8"/>
+                        <path d="M43 48 Q50 52 57 48" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <rect x="42" y="65" width="16" height="7" rx="2" fill="#0284c7"/>
+                        <path d="M28 72 L72 72 L77 92 L23 92 Z" fill="#08152e" stroke="#38bdf8" stroke-width="3" rx="4"/>
+                    </svg>
+                </div>
+                <div class="header-titles">
+                    <h1 class="app-title">Robot CPU Simulator</h1>
+                    <p class="app-subtitle">
+                        <span class="target-icon">🎯</span> Add instructions to make the robo reach the destination with max pts.
+                    </p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button id="levelBadge" class="header-pill level-pill" title="Click to view all levels">
+                    <span class="badge-icon">⭐</span> Level 1 / 10
+                </button>
+                <div class="header-pill collectibles-legend-pill" title="Collectible values (stored in Data Memory when collected)">
+                    <div class="legend-item" title="Diamond = 5 pts">
+                        <svg class="legend-svg" viewBox="0 0 100 100" width="14" height="14">
+                            <polygon points="50,15 82,38 50,85 18,38" fill="#38bdf8"/>
+                            <polygon points="50,15 65,38 50,85 35,38" fill="#bae6fd" opacity="0.6"/>
+                            <polygon points="50,15 82,38 65,38" fill="#ffffff" opacity="0.8"/>
+                        </svg>
+                        <span>5 pts</span>
+                    </div>
+                    <span class="legend-sep">•</span>
+                    <div class="legend-item" title="Battery = 10 pts">
+                        <svg class="legend-svg" viewBox="0 0 100 100" width="13" height="14">
+                            <rect x="42" y="10" width="16" height="8" rx="2" fill="#10b981"/>
+                            <rect x="26" y="18" width="48" height="68" rx="8" fill="#064e3b" stroke="#10b981" stroke-width="4"/>
+                            <path d="M53 28 L38 52 L50 52 L45 74 L64 46 L51 46 Z" fill="#34d399"/>
+                        </svg>
+                        <span>10 pts</span>
+                    </div>
+                    <span class="legend-sep">•</span>
+                    <div class="legend-item" title="Magnet = 15 pts">
+                        <svg class="legend-svg" viewBox="0 0 100 100" width="14" height="14">
+                            <path d="M25 80 L25 45 A25 25 0 0 1 75 45 L75 80 L61 80 L61 45 A11 11 0 0 0 39 45 L39 80 Z" fill="#ef4444"/>
+                            <rect x="25" y="66" width="14" height="14" fill="#cbd5e1"/>
+                            <rect x="61" y="66" width="14" height="14" fill="#cbd5e1"/>
+                        </svg>
+                        <span>15 pts</span>
+                    </div>
+                </div>
+                <div id="pointsBadge" class="header-pill points-pill">
+                    <span class="badge-icon">⭐</span> Points: 0
+                </div>
+                <div class="toggle-container">
+                    <span class="toggle-label">Address Labels</span>
+                    <label class="switch">
+                        <input type="checkbox" id="addressToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button id="settingsBtn" class="icon-btn settings-btn" title="Settings & Instructions Guide">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main 2-Column Dashboard Layout -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Robot World & Program Editor -->
+            <div class="col-left">
+                <!-- Panel 1: Robot World -->
+                <section class="panel panel-robot-world">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="panel-icon cyan-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                                </svg>
+                            </span>
+                            <h2 class="panel-heading">Robot World</h2>
+                        </div>
+                    </div>
+                    <div class="panel-body robot-world-body">
+                        <!-- 5x5 Grid Container -->
+                        <div id="robotGrid" class="robot-grid">
+                            <!-- Populated dynamically with 25 cells (00 - 24) -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 2: Program Editor -->
+                <section class="panel panel-program">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="panel-icon cyan-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </span>
+                            <h2 class="panel-heading">Program</h2>
+                        </div>
+                        <button id="btnAddInstruction" class="btn-add-inst">
+                            <span class="plus-icon">+</span> Add Instruction
+                        </button>
+                    </div>
+                    <div class="panel-body program-body">
+                        <div class="table-scroll-container">
+                            <table class="program-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-num">#</th>
+                                        <th class="col-op">Instruction</th>
+                                        <th class="col-operand">Operand 1</th>
+                                        <th class="col-operand">Operand 2</th>
+                                        <th class="col-action"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="programTableBody">
+                                    <!-- Dynamic Rows with dropdowns -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: CPU, Memory, Current Instruction & Controls -->
+            <div class="col-right">
+                <!-- Panel 1: CPU -->
+                <section class="panel panel-cpu">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="panel-icon purple-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </span>
+                            <h2 class="panel-heading">CPU</h2>
+                        </div>
+                    </div>
+                    <div class="panel-body cpu-body">
+                        <!-- Top Row: PC, IR, Instruction Cycle -->
+                        <div class="cpu-top-row">
+                            <!-- PC Box -->
+                            <div class="cpu-box box-pc">
+                                <div class="box-label blue-label">PC</div>
+                                <div id="pcValue" class="box-value mono">00</div>
+                            </div>
+
+                            <!-- IR Box -->
+                            <div class="cpu-box box-ir">
+                                <div class="box-label purple-label">IR</div>
+                                <div id="irValue" class="box-value mono">-</div>
+                            </div>
+
+                            <!-- Instruction Cycle Stages -->
+                            <div class="cpu-box box-cycle">
+                                <div class="box-label blue-label">Instruction Cycle</div>
+                                <div class="cycle-stages-list">
+                                    <div id="cycleStageFetch" class="cycle-stage-pill active">Fetch</div>
+                                    <div id="cycleStageDecode" class="cycle-stage-pill">Decode</div>
+                                    <div id="cycleStageExecute" class="cycle-stage-pill">Execute</div>
+                                    <div id="cycleStageWriteBack" class="cycle-stage-pill">Write Back</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Row: Registers & ALU -->
+                        <div class="cpu-bottom-row">
+                            <!-- Registers Box -->
+                            <div class="cpu-subpanel subpanel-registers">
+                                <div class="box-label green-label">Registers</div>
+                                <div class="registers-grid">
+                                    <div class="reg-card">
+                                        <span class="reg-name">R0</span>
+                                        <span id="regR0" class="reg-val mono">0</span>
+                                    </div>
+                                    <div class="reg-card">
+                                        <span class="reg-name">R1</span>
+                                        <span id="regR1" class="reg-val mono">0</span>
+                                    </div>
+                                    <div class="reg-card">
+                                        <span class="reg-name">R2</span>
+                                        <span id="regR2" class="reg-val mono">0</span>
+                                    </div>
+                                    <div class="reg-card">
+                                        <span class="reg-name">R3</span>
+                                        <span id="regR3" class="reg-val mono">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ALU Box -->
+                            <div class="cpu-subpanel subpanel-alu">
+                                <div class="box-label amber-label">ALU</div>
+                                <div class="alu-display">
+                                    <div id="aluValue" class="alu-val mono">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 2: Memory -->
+                <section class="panel panel-memory">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="panel-icon cyan-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="3" y1="15" x2="21" y2="15"></line>
+                                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                                    <line x1="15" y1="3" x2="15" y2="21"></line>
+                                </svg>
+                            </span>
+                            <h2 class="panel-heading">Memory</h2>
+                        </div>
+                        <div class="memory-tab-pills">
+                            <button id="tabMemInstructions" class="mem-tab-pill">Instructions</button>
+                            <button id="tabMemData" class="mem-tab-pill active">Data</button>
+                        </div>
+                    </div>
+                    <div class="panel-body memory-body">
+                        <!-- Dual-column table matching screenshot -->
+                        <div class="memory-dual-tables">
+                            <table class="mem-table">
+                                <thead>
+                                    <tr>
+                                        <th>Address</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memoryTableLeft">
+                                    <!-- Addresses 00 - 11 -->
+                                </tbody>
+                            </table>
+                            <table class="mem-table">
+                                <thead>
+                                    <tr>
+                                        <th>Address</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="memoryTableRight">
+                                    <!-- Addresses 12 - 24 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 3: Current Instruction & Execution Flow -->
+                <section class="panel panel-current-inst">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <span class="panel-icon cyan-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </span>
+                            <h2 class="panel-heading">Current Instruction</h2>
+                        </div>
+                    </div>
+                    <div class="panel-body current-inst-body">
+                        <!-- Top box: Current Opcode -->
+                        <div class="inst-display-box">
+                            <span id="currentInstDisplay" class="mono">-</span>
+                        </div>
+
+                        <!-- Bottom Split: Details & Execution Flow -->
+                        <div class="inst-bottom-split">
+                            <div class="inst-details-box">
+                                <span class="sub-label cyan-label">Details</span>
+                                <p id="instDetails" class="details-text">No instruction executed yet.</p>
+                            </div>
+
+                            <div class="inst-flow-box">
+                                <span class="sub-label slate-label">Execution Flow</span>
+                                <div class="flow-stages-row">
+                                    <span id="flowFetch" class="flow-pill">
+                                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        Fetch
+                                    </span>
+                                    <span id="flowDecode" class="flow-pill">
+                                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        Decode
+                                    </span>
+                                    <span id="flowExecute" class="flow-pill">
+                                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        Execute
+                                    </span>
+                                    <span id="flowWriteBack" class="flow-pill">
+                                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        Write Back
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 4: Controls Bar -->
+                <div class="controls-panel">
+                    <button id="btnRun" class="ctrl-btn btn-run">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Run
+                    </button>
+                    <button id="btnStep" class="ctrl-btn btn-step">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                            <polygon points="2 19 11 12 2 5 2 19"></polygon>
+                        </svg>
+                        Next Step
+                    </button>
+                    <button id="btnPause" class="ctrl-btn btn-pause">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    </button>
+                    <button id="btnReset" class="ctrl-btn btn-reset">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="modal-overlay">
+        <div class="modal-card victory-card">
+            <button id="btnCloseVictory" class="modal-close-btn">&times;</button>
+            <div class="victory-icon-banner">🎉🏁</div>
+            <h2 class="modal-title">Level Completed!</h2>
+            <p class="modal-subtitle">Great job! The robot successfully reached destination flag 24.</p>
+            <div id="victoryDetails" class="modal-stats-container">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="modal-actions">
+                <button id="btnReplayLevel" class="modal-btn btn-secondary">Replay Level</button>
+                <button id="btnNextLevel" class="modal-btn btn-primary">Next Level &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Select Modal -->
+    <div id="levelSelectModal" class="modal-overlay">
+        <div class="modal-card level-select-card">
+            <button id="btnCloseLevelSelect" class="modal-close-btn">&times;</button>
+            <h2 class="modal-title">Select Level (1 - 10)</h2>
+            <p class="modal-subtitle">Complete levels to unlock the next challenge!</p>
+            <div id="levelGrid" class="level-selection-grid">
+                <!-- Dynamically populated 1 to 10 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-card settings-card">
+            <button id="btnCloseSettings" class="modal-close-btn">&times;</button>
+            <h2 class="modal-title">Simulator Settings & Guide</h2>
+            
+            <div class="settings-group">
+                <label class="setting-item">
+                    <span>Sound Effects (8-bit Synthesizer)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="soundSetting" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </label>
+
+                <label class="setting-item">
+                    <span>Execution Speed</span>
+                    <select id="speedSetting" class="modal-select">
+                        <option value="slow">Slow (900ms)</option>
+                        <option value="normal" selected>Normal (450ms)</option>
+                        <option value="fast">Fast (160ms)</option>
+                    </select>
+                </label>
+
+                <label class="setting-item">
+                    <span>Step Mode</span>
+                    <select id="stepModeSetting" class="modal-select">
+                        <option value="micro" selected>Micro-Step (Fetch &rarr; Decode &rarr; Exec &rarr; WB)</option>
+                        <option value="macro">Instruction Step (Full Cycle)</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="coa-cheatsheet">
+                <h3>COA Instruction Set Cheatsheet:</h3>
+                <ul>
+                    <li><code>MOVE_UP / DOWN / LEFT / RIGHT</code>: Actuates robot grid motion.</li>
+                    <li><code>LOAD Rd, [addr]</code>: Reads Data Memory at [addr] into register Rd.</li>
+                    <li><code>STORE Rs, [addr]</code>: Writes register Rs into Data Memory at [addr].</li>
+                    <li><code>ADD Rd, Rs</code>: ALU computes <code>Rd = Rd + Rs</code>.</li>
+                    <li><code>SUB Rd, Rs</code>: ALU computes <code>Rd = Rd - Rs</code>.</li>
+                    <li><code>HALT</code>: Cleanly terminates CPU execution.</li>
+                </ul>
+            </div>
+
+            <div class="danger-zone">
+                <button id="btnResetAllProgress" class="btn-danger">Reset All Progress & Scores</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script dependencies in order -->
+    <script src="js/audio.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/memory.js"></script>
+    <script src="js/instructions.js"></script>
+    <script src="js/robot.js"></script>
+    <script src="js/cpu.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
+
