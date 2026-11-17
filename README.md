@@ -4,6 +4,20 @@ An educational **Computer Organisation and Architecture (COA)** mini-project and
 
 The player writes sequences of CPU instructions to guide a robot across a 5×5 grid, collecting valuable objects, computing arithmetic results in the Arithmetic Logic Unit (ALU), avoiding obstacles, and reaching the destination flag while demonstrating the inner mechanics of the CPU **Fetch → Decode → Execute → Write Back** cycle.
 
+<p align="center">
+  <a href="https://robotcpusimulator.vercel.app/">
+    <img src="https://img.shields.io/badge/🚀_Try_Live_Demo-Visit_Simulator-blue?style=for-the-badge" alt="Live Demo"/>
+  </a>
+</p>
+
+---
+
+## 🌐 Live Demo
+
+**Try the Robot CPU Simulator here:**
+
+👉 https://robotcpusimulator.vercel.app/
+
 ---
 
 ## 🎯 Features
