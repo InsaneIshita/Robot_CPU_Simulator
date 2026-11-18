@@ -1,4 +1,6 @@
-# Robot CPU Simulator 🤖⚡
+# Robot CPU Simulator 🤖
+
+![Robot CPU Simulator](./screenshots/IMG-20261118-WA0001.jpg)
 
 An educational **Computer Organisation and Architecture (COA)** mini-project and retro puzzle game built with **HTML5, CSS3, and Vanilla JavaScript**.
 
@@ -34,9 +36,9 @@ The player writes sequences of CPU instructions to guide a robot across a 5×5 g
   - 25 cells addressed `00` through `24` in row-major order.
   - Robot always begins at `00`; destination flag is always at `24`.
   - **Collectibles**:
-    - Diamond 💎 — 5 points (stores `5` at memory address)
-    - Battery 🔋 — 10 points (stores `10` at memory address)
-    - Magnet 🧲 — 15 points (stores `15` at memory address)
+    - Diamond 💎 - 5 points (stores `5` at memory address)
+    - Battery 🔋 - 10 points (stores `10` at memory address)
+    - Magnet 🧲 - 15 points (stores `15` at memory address)
   - **Obstacles**:
     - Wall 🧱, Tree 🌳, Cactus 🌵, Rock 🪨, Bush 🌿.
     - Movement blocking with boundary detection, collision shake, sound effects, and error reporting.
